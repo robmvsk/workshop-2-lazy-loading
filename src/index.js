@@ -2,7 +2,8 @@
  * This file is just a silly example to show everything working in the browser.
  * When you're ready to start on your site, clear the file. Happy hacking!
  **/
-import registerImage from './lazy.js';
+import registerImage, { limpiarReporte } from './lazy.js';
+import onConnectionChange from './infoNetwork.js';
 
 console.log('Happy hacking :)')
 
@@ -25,11 +26,20 @@ const imageRandom = () => Math.floor(Math.random() * (maximum - minimum)) + mini
 //crear una imagen
 const createImageNode = () => {
     const container = document.createElement('div')
-    container.className = "p-4"
+    container.className = "p-1 py-1 mt-6 bg-green-300 rounded-md mx-auto lds-hourglass"
 
     const imagen = document.createElement('img')
-    imagen.className = "mx-auto"
+    imagen.className = "mx-auto rounded-md"
     imagen.width = "320"
+    imagen.Height = "100"
+
+    //Hace un wrapper para que muestre el cuadro gris de pre-carga
+    //ya no se requiere porque la clase lds-hourglass, 
+    //incluye estas 3 instrucciones pero en CSS
+        //container.style.minHeight = "100px";
+        //container.style.minWidth = "320px";
+        //container.style.display = "inline-block";
+
 
     //Esta es la linea que hace que una imagen cargue, para aplicar la
     //tecnica de lazy loading, se tiene que cambiar de lugar la carga
@@ -42,13 +52,14 @@ const createImageNode = () => {
     imagen.dataset.src = `https://randomfox.ca/images/${imageRandom()}.jpg`
 
     container.appendChild(imagen)
+
     return container
 }
 
 //const nuevaImagen = createImageNode()
 const mountNode = document.getElementById('images')
 
-const addButton = document.querySelector('button')
+const addButton = document.getElementById('agregarImagen')
 //const accion = () => console.log("Hey!")
 //addButton.addEventListener('click', accion)
 
@@ -63,3 +74,20 @@ const addImage = () => {
 addButton.addEventListener('click', addImage)
 
 //mountNode.append(nuevaImagen)
+
+//boton de limpiar imagenes
+//otr forma: const clean = document.querySelector("button[type='reset']");
+const cleanButton = document.getElementById('limpiarImagen')
+//evento para limpiar las imagenes que existan
+const cleanImage = () => {
+    const nodoImagenes = document.getElementById('images')
+    nodoImagenes.innerHTML = ""
+    limpiarReporte()  //reinicia las variables contadores de toal de imagenes y total de imagenes cargadas
+}
+
+cleanButton.addEventListener('click', cleanImage)
+
+navigator.connection.addEventListener('change', onConnectionChange)
+
+const verConexionButton = document.getElementById('network')
+verConexionButton.addEventListener('click', onConnectionChange)

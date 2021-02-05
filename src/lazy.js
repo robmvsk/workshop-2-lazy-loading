@@ -1,3 +1,5 @@
+let totalImagenes = 0
+let totalCargadas = 0
 
 const isIntersecting = (entry) => {
     //podemos hacer algo asi: si estas a 200px lejos de la pantalla -- X, Y has algo
@@ -12,6 +14,22 @@ const accion = (entry) =>  {
     
     //ahora si se realiza la carga real de la imagen
     imagen.src = url
+
+    imagen.onload = () => {  //Este evento se ejecuta despues de cargar la imagen
+        totalCargadas += 1
+        logState();
+
+        //quita la clase lds-hourglass
+        nodo.className = "p-1 py-1 mt-6 bg-green-300 rounded-md mx-auto ajustar-margen"
+        //nodo.classList.remove("lds-hourglass")
+
+        //ya no se requiere porque la clase ajustar-margen, 
+        //incluye estas 3 instrucciones pero en CSS
+            //nodo.style.minHeight = "100px";
+            //nodo.style.minWidth = "320px";
+            //nodo.style.display = "inline-block";
+        
+    };
 
     //debugger;
 
@@ -29,6 +47,7 @@ const accion = (entry) =>  {
 
 //const observer = new IntersectionObserver(funcionQueHacerPorCadaImagen)
 const observer = new IntersectionObserver( (entries) => {
+    console.log('Hey, estoy creando el Intersection Observer...')
     //entries, son todos los elementos que el Obserer esta observando y verificando si so o no visibles
     entries
         .filter(isIntersecting)  //queremos saber si hay una interseccion con el viewport
@@ -41,6 +60,19 @@ const registerImage = (image) => {
     //Intersection Observer --> observer (imagen)
     observer.observe(image)
 
+    totalImagenes += 1
+    logState()
 }
+
+function logState() {
+    console.log(`⚪️ Total Imágenes: ${totalImagenes}`);
+    console.log(`🟣 Imágenes cargadas: ${totalCargadas}`);
+    console.log("--------------------------------------");
+  }
+
+  export const limpiarReporte = () => {
+    totalImagenes = 0
+    totalCargadas = 0
+  }
 
 export default registerImage;
